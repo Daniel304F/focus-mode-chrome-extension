@@ -1,6 +1,7 @@
 const TRACKER_DEFAULT_BASE_URL = "http://127.0.0.1:4545";
 const FLUSH_ALARM = "focusmode-flush";
 const RECOMMENDATIONS_ALARM = "focusmode-recommendations";
+const POMODORO_ALARM = "focusmode-pomodoro";
 const MIN_SESSION_MS = 2000;
 const MAX_RECENT_SESSIONS = 200;
 const MAX_RECOMMENDATIONS = 24;
@@ -35,6 +36,10 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   }
   if (alarm.name === RECOMMENDATIONS_ALARM) {
     refreshRecommendations(false);
+  }
+
+  if (alarm.name === POMODORO_ALARM) {
+    handlePomodoroAlarm();
   }
 });
 
@@ -97,6 +102,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     pingTracker()
       .then((status) => sendResponse({ ok: true, status }))
       .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (request.action === "pomodoro_start") {
+    pomodoroStart(request.phase, request.settings)
+      .then((s) => sendResponse({ ok: true, state: s }))
+      .catch((e) => sendResponse({ ok: false, error: e.message }));
+    return true;
+  }
+
+  if (request.action === "pomodoro_stop") {
+    pomodoroStop()
+      .then(() => sendResponse({ ok: true }))
+      .catch((e) => sendResponse({ ok: false, error: e.message }));
+    return true;
+  }
+
+  if (request.action === "pomodoro_pause") {
+    pomodoroPause()
+      .then((s) => sendResponse({ ok: true, state: s }))
+      .catch((e) => sendResponse({ ok: false, error: e.message }));
+    return true;
+  }
+
+  if (request.action === "pomodoro_resume") {
+    pomodoroResume()
+      .then((s) => sendResponse({ ok: true, state: s }))
+      .catch((e) => sendResponse({ ok: false, error: e.message }));
     return true;
   }
 
@@ -648,5 +681,116 @@ function getTab(tabId) {
       }
       resolve(tab);
     });
+  });
+}
+
+// ── Pomodoro ──────────────────────────────────────────────────────────────────
+
+const POMODORO_DEFAULTS = { work: 25, shortBreak: 5, longBreak: 15, longBreakAfter: 4 };
+
+async function pomodoroStart(phase, settings) {
+  const s = { ...POMODORO_DEFAULTS, ...(settings || {}) };
+  const durations = {
+    work: s.work * 60 * 1000,
+    "short-break": s.shortBreak * 60 * 1000,
+    "long-break": s.longBreak * 60 * 1000,
+  };
+  const duration = durations[phase] || durations.work;
+
+  const existing = (await storageGet(["pomodoroState"])).pomodoroState || {};
+  const session = phase === "work" ? ((existing.session || 0) % s.longBreakAfter) + 1 : (existing.session || 1);
+
+  const newState = {
+    phase: phase || "work",
+    startedAt: Date.now(),
+    duration,
+    paused: false,
+    pausedRemainingMs: 0,
+    session,
+    settings: s,
+  };
+
+  chrome.alarms.clear(POMODORO_ALARM);
+  chrome.alarms.create(POMODORO_ALARM, { when: Date.now() + duration });
+  await storageSet({ pomodoroState: newState });
+  return newState;
+}
+
+async function pomodoroStop() {
+  chrome.alarms.clear(POMODORO_ALARM);
+  const existing = (await storageGet(["pomodoroState"])).pomodoroState || {};
+  await storageSet({
+    pomodoroState: {
+      phase: "idle",
+      paused: false,
+      pausedRemainingMs: 0,
+      session: existing.session || 1,
+      settings: existing.settings || POMODORO_DEFAULTS,
+    },
+  });
+}
+
+async function pomodoroPause() {
+  const data = await storageGet(["pomodoroState"]);
+  const state = data.pomodoroState || {};
+  if (!state.phase || state.phase === "idle" || state.paused) return state;
+
+  const elapsed = Date.now() - state.startedAt;
+  const remaining = Math.max(0, state.duration - elapsed);
+
+  chrome.alarms.clear(POMODORO_ALARM);
+  const newState = { ...state, paused: true, pausedRemainingMs: remaining };
+  await storageSet({ pomodoroState: newState });
+  return newState;
+}
+
+async function pomodoroResume() {
+  const data = await storageGet(["pomodoroState"]);
+  const state = data.pomodoroState || {};
+  if (!state.paused || !state.pausedRemainingMs) return state;
+
+  const newState = {
+    ...state,
+    startedAt: Date.now() - (state.duration - state.pausedRemainingMs),
+    paused: false,
+    pausedRemainingMs: 0,
+  };
+
+  chrome.alarms.clear(POMODORO_ALARM);
+  chrome.alarms.create(POMODORO_ALARM, { when: Date.now() + state.pausedRemainingMs });
+  await storageSet({ pomodoroState: newState });
+  return newState;
+}
+
+async function handlePomodoroAlarm() {
+  const data = await storageGet(["pomodoroState", "uiLanguage"]);
+  const state = data.pomodoroState || {};
+  const lang = data.uiLanguage || "de";
+
+  const isWork = state.phase === "work";
+  const titles = {
+    de: isWork ? "Pomodoro abgeschlossen! 🎉" : "Pause vorbei!",
+    en: isWork ? "Pomodoro done! 🎉" : "Break's over!",
+  };
+  const messages = {
+    de: isWork ? "Gut gemacht! Zeit für eine Pause." : "Bereit für die nächste Einheit?",
+    en: isWork ? "Great work! Time for a break." : "Ready for the next session?",
+  };
+
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "focus.svg",
+    title: titles[lang] || titles.de,
+    message: messages[lang] || messages.de,
+  });
+
+  // Mark as idle
+  await storageSet({
+    pomodoroState: {
+      ...state,
+      phase: "idle",
+      paused: false,
+      pausedRemainingMs: 0,
+    },
   });
 }

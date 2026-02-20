@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>FocusMode</title>
     <style>
-      /* ── Variables (light) ──────────────────────── */
+      /* ── Variables ─────────────────────────────────────────────────── */
       :root {
         --bg: #f4f5f7;
         --surface: #ffffff;
@@ -21,19 +21,20 @@
         --sidebar-bg: #1e293b;
         --sidebar-text: #94a3b8;
         --sidebar-active: #5eead4;
-        --sidebar-active-bg: rgba(15, 118, 110, 0.18);
+        --sidebar-active-bg: rgba(15,118,110,0.18);
         --item-bg: #f8fafc;
         --item-border: #edf1f6;
         --icon-btn-bg: #ffffff;
         --icon-btn-border: #dce3ed;
         --btn-soft-bg: #eef2ff;
         --btn-soft-color: #1e3a8a;
-        --autocomplete-bg: #ffffff;
-        --autocomplete-hover: #e0f2fe;
+        --ac-bg: #ffffff;
+        --ac-hover: #e0f2fe;
         --bar-track: #e2e8f0;
+        --pomo-ring-bg: #e2e8f0;
+        --pomo-ring-fill: url(#pomoGradient);
       }
 
-      /* ── Variables (dark) ───────────────────────── */
       [data-theme="dark"] {
         --bg: #0f172a;
         --surface: #1e293b;
@@ -45,13 +46,15 @@
         --item-border: #2d3f55;
         --icon-btn-bg: #1e293b;
         --icon-btn-border: #2d3f55;
-        --btn-soft-bg: rgba(99, 122, 220, 0.15);
+        --btn-soft-bg: rgba(99,122,220,0.15);
         --btn-soft-color: #93c5fd;
-        --autocomplete-bg: #1e293b;
-        --autocomplete-hover: rgba(29, 78, 216, 0.22);
+        --ac-bg: #1e293b;
+        --ac-hover: rgba(29,78,216,0.22);
         --bar-track: #2d3f55;
+        --pomo-ring-bg: #2d3f55;
       }
 
+      /* ── Reset ─────────────────────────────────────────────────────── */
       * { box-sizing: border-box; margin: 0; padding: 0; }
 
       body {
@@ -62,10 +65,9 @@
         color: var(--text);
         display: flex;
         background: var(--bg);
-        transition: background 0.2s, color 0.2s;
       }
 
-      /* ── Sidebar ─────────────────────────────────── */
+      /* ── Sidebar ───────────────────────────────────────────────────── */
       .sidebar {
         width: 68px;
         height: 600px;
@@ -79,310 +81,222 @@
       }
 
       .sidebar-logo {
-        width: 36px;
-        height: 36px;
+        width: 36px; height: 36px;
         background: linear-gradient(135deg, #0f766e, #1d4ed8);
         border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: #fff;
-        font-weight: 800;
-        font-size: 13px;
-        margin-bottom: 10px;
-        letter-spacing: -0.5px;
-        flex-shrink: 0;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-weight: 800; font-size: 13px;
+        margin-bottom: 10px; letter-spacing: -0.5px; flex-shrink: 0;
       }
 
       .nav-btn {
-        width: 56px;
-        background: transparent;
-        border: 0;
-        border-radius: 10px;
-        padding: 8px 4px 6px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 3px;
-        cursor: pointer;
-        color: var(--sidebar-text);
+        width: 56px; background: transparent; border: 0; border-radius: 10px;
+        padding: 8px 4px 6px; display: flex; flex-direction: column;
+        align-items: center; gap: 3px; cursor: pointer; color: var(--sidebar-text);
         transition: background 0.15s, color 0.15s;
       }
-
       .nav-btn:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
       .nav-btn.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); }
       .nav-icon { font-size: 18px; line-height: 1; }
       .nav-label { font-size: 10px; font-weight: 600; line-height: 1; white-space: nowrap; }
 
-      /* ── Main content ──────────────────────────── */
-      .content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
-      [data-theme="light"] .content {
-        background: radial-gradient(circle at 0% 0%, #eff6ff, #f4f5f7 60%);
-      }
-
-      [data-theme="dark"] .content {
-        background: radial-gradient(circle at 0% 0%, #0d1b40, #0f172a 60%);
-      }
+      /* ── Content ───────────────────────────────────────────────────── */
+      .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+      [data-theme="light"] .content { background: radial-gradient(circle at 0% 0%, #eff6ff, #f4f5f7 60%); }
+      [data-theme="dark"] .content { background: radial-gradient(circle at 0% 0%, #0d1b40, #0f172a 60%); }
 
       .header {
         flex-shrink: 0;
         background: linear-gradient(135deg, #0f766e, #1d4ed8);
-        color: #fff;
-        padding: 10px 14px 9px;
+        color: #fff; padding: 10px 14px 9px;
       }
-
       .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
       .header h1 { font-size: 16px; letter-spacing: 0.2px; }
       .status-row { display: flex; align-items: center; gap: 8px; }
-      .muted { color: var(--muted); font-size: 11px; }
 
-      .chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        font-size: 10px;
-        font-weight: 600;
-        padding: 3px 7px;
-        border-radius: 999px;
-        border: 1px solid transparent;
-      }
-
-      .chip.ok { background: var(--ok-soft); color: var(--ok); border-color: rgba(22,101,52,0.25); }
-      .chip.err { background: var(--warning-soft); color: var(--warning); border-color: rgba(185,28,28,0.25); }
-
-      /* ── Pages ─────────────────────────────────── */
+      /* ── Pages ─────────────────────────────────────────────────────── */
       .pages { flex: 1; overflow: hidden; position: relative; }
-
       .page {
-        position: absolute;
-        inset: 0;
-        overflow-y: auto;
-        padding: 10px 12px;
-        display: none;
-        flex-direction: column;
-        gap: 8px;
+        position: absolute; inset: 0; overflow-y: auto;
+        padding: 10px 12px; display: none; flex-direction: column; gap: 8px;
       }
-
       .page.active { display: flex; }
 
-      /* ── Cards ─────────────────────────────────── */
+      /* ── Cards ─────────────────────────────────────────────────────── */
       .card {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 12px;
-        padding: 12px;
-        flex-shrink: 0;
+        background: var(--surface); border: 1px solid var(--line);
+        border-radius: 12px; padding: 12px; flex-shrink: 0;
         transition: background 0.2s, border-color 0.2s;
       }
-
-      .title-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 8px;
-      }
-
+      .title-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
       h2 { font-size: 13px; }
+      .muted { color: var(--muted); font-size: 11px; }
 
-      /* ── Form controls ─────────────────────────── */
-      .input-row, .action-row, .tracker-row, .settings-row { display: flex; gap: 8px; }
+      /* ── Forms ─────────────────────────────────────────────────────── */
+      .input-row, .action-row, .tracker-row, .settings-row, .api-key-row { display: flex; gap: 8px; }
       .input-row { margin-bottom: 8px; }
       .autocomplete-container { position: relative; flex: 1; }
 
-      input[type="text"], input[type="password"] {
-        width: 100%;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        padding: 7px 10px;
-        font-size: 13px;
-        background: var(--surface-soft);
-        color: var(--text);
-        outline: none;
+      input[type="text"], input[type="password"], input[type="number"], select {
+        width: 100%; border: 1px solid var(--line); border-radius: 8px;
+        padding: 7px 10px; font-size: 13px; background: var(--surface-soft);
+        color: var(--text); outline: none;
         transition: background 0.2s, color 0.2s, border-color 0.2s;
       }
-
-      input[type="text"]:focus, input[type="password"]:focus {
-        border-color: #1d4ed8;
-        box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.14);
-        background: var(--surface);
-      }
+      input[type="number"] { padding: 6px 8px; text-align: center; }
+      input:focus, select:focus { border-color: #1d4ed8; box-shadow: 0 0 0 3px rgba(29,78,216,0.14); background: var(--surface); }
 
       button {
-        border: 0;
-        border-radius: 8px;
-        padding: 7px 10px;
-        font-size: 12px;
-        font-weight: 600;
-        cursor: pointer;
+        border: 0; border-radius: 8px; padding: 7px 10px;
+        font-size: 12px; font-weight: 600; cursor: pointer;
         transition: background 0.15s, color 0.15s;
       }
-
       .btn-primary { background: var(--primary); color: #fff; }
       .btn-primary:hover { background: var(--primary-strong); }
       .btn-soft { background: var(--btn-soft-bg); color: var(--btn-soft-color); }
       .btn-danger { background: var(--warning-soft); color: var(--warning); }
-      .btn-ok { background: var(--ok-soft); color: var(--ok); }
       .btn-full { width: 100%; }
-      .action-row button, .settings-row button { flex: 1; }
+      .action-row button, .settings-row .flex-btn { flex: 1; }
 
-      /* ── Lists ─────────────────────────────────── */
+      /* ── Lists ─────────────────────────────────────────────────────── */
       .list { list-style: none; display: grid; gap: 6px; }
-
       .item {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-        font-size: 12px;
-        background: var(--item-bg);
-        border: 1px solid var(--item-border);
-        border-radius: 8px;
-        padding: 7px 8px;
-        transition: background 0.2s;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 8px; font-size: 12px; background: var(--item-bg);
+        border: 1px solid var(--item-border); border-radius: 8px; padding: 7px 8px;
       }
-
       .item-main { flex: 1; min-width: 0; }
       .item-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .item-sub { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
       .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-
       .icon-btn {
-        width: 25px; height: 25px; padding: 0;
-        border-radius: 6px;
-        background: var(--icon-btn-bg);
-        border: 1px solid var(--icon-btn-border);
-        color: var(--text);
+        width: 25px; height: 25px; padding: 0; border-radius: 6px;
+        background: var(--icon-btn-bg); border: 1px solid var(--icon-btn-border); color: var(--text);
       }
-
       .icon-btn.star.active { color: #f59e0b; border-color: rgba(245,158,11,0.4); background: #fffbeb; }
 
-      /* ── Stats ─────────────────────────────────── */
+      /* ── Stats ─────────────────────────────────────────────────────── */
       .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-
-      .stat-box {
-        background: var(--item-bg);
-        border: 1px solid var(--item-border);
-        border-radius: 8px;
-        padding: 8px 10px;
-        transition: background 0.2s;
-      }
-
+      .stat-box { background: var(--item-bg); border: 1px solid var(--item-border); border-radius: 8px; padding: 8px 10px; }
       .stat-value { font-size: 16px; font-weight: 700; }
       .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
-      /* ── Bar chart ─────────────────────────────── */
-      .bar-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-        padding: 7px 8px;
-        background: var(--item-bg);
-        border: 1px solid var(--item-border);
-        border-radius: 8px;
-      }
-
+      .bar-item { display: flex; flex-direction: column; gap: 4px; padding: 7px 8px; background: var(--item-bg); border: 1px solid var(--item-border); border-radius: 8px; }
       .bar-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
       .bar-name { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .bar-meta { font-size: 11px; color: var(--muted); flex-shrink: 0; margin-left: 8px; }
-
       .bar-track { height: 4px; background: var(--bar-track); border-radius: 999px; overflow: hidden; }
       .bar-fill { height: 100%; background: linear-gradient(90deg, #0f766e, #1d4ed8); border-radius: 999px; }
 
-      /* ── Daily chart ───────────────────────────── */
-      .daily-chart {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        gap: 4px;
-        align-items: end;
-        height: 90px;
-      }
-
+      .daily-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; height: 90px; }
       .day-col { display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
       .day-bar { width: 100%; background: linear-gradient(180deg, #0f766e, #1d4ed8); border-radius: 4px 4px 0 0; min-height: 3px; }
       .day-label { font-size: 9px; color: var(--muted); text-align: center; }
       .day-label.today { color: var(--primary); font-weight: 700; }
 
-      /* ── Summary box ───────────────────────────── */
-      .summary-box {
-        margin-top: 10px;
-        padding: 10px 12px;
-        background: var(--surface-soft);
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        font-size: 12px;
-        line-height: 1.6;
-        color: var(--text);
-        white-space: pre-wrap;
-        word-break: break-word;
-        max-height: 200px;
-        overflow-y: auto;
+      /* ── Pomodoro ──────────────────────────────────────────────────── */
+      .pomo-ring-wrap {
+        display: flex; justify-content: center; align-items: center;
+        padding: 8px 0 4px; position: relative;
+      }
+      .pomo-ring-wrap svg { width: 130px; height: 130px; transform: rotate(-90deg); }
+      .pomo-countdown-overlay {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        text-align: center; pointer-events: none;
+      }
+      #pomo-countdown { font-size: 28px; font-weight: 800; letter-spacing: 1px; line-height: 1; }
+      #pomo-phase-label { font-size: 11px; color: var(--muted); margin-top: 3px; display: block; }
+      #pomo-paused-label { font-size: 10px; color: var(--warning); display: none; }
+
+      .pomo-session-row { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+
+      .pomo-phase-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+      .pomo-phase-btn {
+        flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600;
+        background: var(--item-bg); border: 1.5px solid var(--item-border);
+        border-radius: 8px; color: var(--muted); cursor: pointer;
+        transition: all 0.15s;
+      }
+      .pomo-phase-btn.active {
+        background: var(--sidebar-active-bg); border-color: var(--primary);
+        color: var(--primary);
       }
 
+      .pomo-controls { display: flex; gap: 8px; }
+      .pomo-settings { margin-top: 8px; }
+      .pomo-settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+      .pomo-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+      .pomo-settings-row label { font-size: 11px; color: var(--muted); flex: 1; }
+      .pomo-settings-row input { width: 56px; flex-shrink: 0; }
+
+      /* ── Settings ──────────────────────────────────────────────────── */
+      .setting-row {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 6px 0; border-bottom: 1px solid var(--line);
+      }
+      .setting-row:last-child { border-bottom: 0; }
+      .setting-label { font-size: 12px; font-weight: 600; }
+
+      /* Toggle switch */
+      .toggle-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+      .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+      .toggle-track {
+        width: 38px; height: 22px; background: var(--line); border-radius: 999px;
+        position: relative; transition: background 0.2s; cursor: pointer; display: block;
+      }
+      .toggle-switch input:checked + .toggle-track { background: var(--primary); }
+      .toggle-thumb {
+        position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
+        background: white; border-radius: 50%; transition: transform 0.2s;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      }
+      .toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(16px); }
+
+      /* Language select */
+      .lang-select { width: auto; padding: 5px 8px; font-size: 12px; }
+
+      .reconnect-status { font-size: 11px; }
+
+      .setup-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+      .api-key-row { margin-bottom: 8px; }
+      .api-key-row input { flex: 1; }
+      .api-key-row button { flex-shrink: 0; }
+
+      .summary-box {
+        margin-top: 10px; padding: 10px 12px; background: var(--surface-soft);
+        border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
+        line-height: 1.6; color: var(--text); white-space: pre-wrap;
+        word-break: break-word; max-height: 200px; overflow-y: auto;
+      }
       .summary-box.loading { color: var(--muted); font-style: italic; }
       .summary-box.error { color: var(--warning); }
 
-      /* ── Autocomplete ──────────────────────────── */
+      /* ── Autocomplete ──────────────────────────────────────────────── */
       .autocomplete-items {
-        position: absolute;
-        top: calc(100% + 2px);
-        left: 0; right: 0;
-        z-index: 40;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        background: var(--autocomplete-bg);
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.15);
-        overflow: hidden;
-        max-height: 180px;
-        overflow-y: auto;
+        position: absolute; top: calc(100% + 2px); left: 0; right: 0; z-index: 40;
+        border: 1px solid var(--line); border-radius: 8px; background: var(--ac-bg);
+        box-shadow: 0 8px 22px rgba(15,23,42,0.15); overflow: hidden;
+        max-height: 180px; overflow-y: auto;
       }
-
-      .autocomplete-item {
-        padding: 7px 10px;
-        font-size: 12px;
-        cursor: pointer;
-        border-bottom: 1px solid var(--line);
-        color: var(--text);
-      }
-
+      .autocomplete-item { padding: 7px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--line); color: var(--text); }
       .autocomplete-item:last-child { border-bottom: 0; }
-      .autocomplete-item:hover, .autocomplete-item.active { background: var(--autocomplete-hover); }
+      .autocomplete-item:hover, .autocomplete-item.active { background: var(--ac-hover); }
       .autocomplete-item small { color: var(--muted); }
 
-      /* ── Setup specifics ───────────────────────── */
-      .setup-label {
-        font-size: 11px;
-        color: var(--muted);
-        margin-bottom: 5px;
+      /* ── Chips ─────────────────────────────────────────────────────── */
+      .chip {
+        display: inline-flex; align-items: center; gap: 5px; font-size: 10px;
+        font-weight: 600; padding: 3px 7px; border-radius: 999px; border: 1px solid transparent;
       }
-
-      .api-key-row {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-
-      .api-key-row input { flex: 1; }
-
-      .reconnect-status {
-        font-size: 11px;
-        transition: color 0.3s;
-      }
+      .chip.ok { background: var(--ok-soft); color: var(--ok); border-color: rgba(22,101,52,0.25); }
+      .chip.err { background: var(--warning-soft); color: var(--warning); border-color: rgba(185,28,28,0.25); }
     </style>
   </head>
   <body>
 
-    <!-- ── Sidebar ─────────────────────────────────── -->
+    <!-- ── Sidebar ────────────────────────────────────────────────────── -->
     <nav class="sidebar">
       <div class="sidebar-logo">FM</div>
-
       <button class="nav-btn active" data-page="blocker">
         <span class="nav-icon">🔒</span>
         <span class="nav-label" data-i18n="navBlocker">Blocker</span>
@@ -395,6 +309,10 @@
         <span class="nav-icon">📊</span>
         <span class="nav-label" data-i18n="navStatistik">Statistik</span>
       </button>
+      <button class="nav-btn" data-page="pomodoro">
+        <span class="nav-icon">🍅</span>
+        <span class="nav-label" data-i18n="navPomodoro">Timer</span>
+      </button>
       <button class="nav-btn" data-page="empfehlungen">
         <span class="nav-icon">💡</span>
         <span class="nav-label" data-i18n="navEmpfehlungen">Tipps</span>
@@ -405,9 +323,8 @@
       </button>
     </nav>
 
-    <!-- ── Main Content ────────────────────────────── -->
+    <!-- ── Main ──────────────────────────────────────────────────────── -->
     <div class="content">
-
       <header class="header">
         <div class="header-top">
           <h1>FocusMode</h1>
@@ -430,8 +347,7 @@
             <div class="input-row">
               <div class="autocomplete-container">
                 <input type="text" id="siteInput" autocomplete="off"
-                  data-i18n-ph="blockerPlaceholder"
-                  placeholder="Domain, z. B. reddit.com" />
+                  data-i18n-ph="blockerPlaceholder" placeholder="Domain, z. B. reddit.com" />
               </div>
               <button class="btn-primary" id="addBtn" data-i18n="blockerAddBtn">Block</button>
             </div>
@@ -451,7 +367,7 @@
               <button class="btn-soft" id="manage-btn" data-i18n="elementeManageBtn">Verwalten</button>
               <button class="btn-danger" id="reset-all-btn" data-i18n="elementeResetBtn">Alle zurücksetzen</button>
             </div>
-            <ul class="list" id="hiddenElementList" style="margin-top: 8px"></ul>
+            <ul class="list" id="hiddenElementList" style="margin-top:8px"></ul>
           </div>
         </div>
 
@@ -481,7 +397,6 @@
               </div>
             </div>
           </div>
-
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="statsTopSites">Top-Seiten</h2>
@@ -489,13 +404,86 @@
             </div>
             <div class="list" id="topStatsList"></div>
           </div>
-
           <div class="card" id="dailyCard">
             <div class="title-row">
               <h2 data-i18n="statsLast7Days">Letzte 7 Tage</h2>
               <span class="muted" id="weekTotalLabel"></span>
             </div>
             <div class="daily-chart" id="dailyChart"></div>
+          </div>
+        </div>
+
+        <!-- ── Pomodoro ── -->
+        <div class="page" id="page-pomodoro">
+          <div class="card">
+            <div class="title-row">
+              <h2 data-i18n="pomodoroTitle">Pomodoro-Timer</h2>
+              <span class="muted pomo-session-row" id="pomo-session">Einheit 1/4</span>
+            </div>
+
+            <!-- Phase selection -->
+            <div class="pomo-phase-btns">
+              <button class="pomo-phase-btn active" data-phase="work" data-i18n="pomodoroPhaseWork">Fokus</button>
+              <button class="pomo-phase-btn" data-phase="short-break" data-i18n="pomodoroPhaseShort">Kurze Pause</button>
+              <button class="pomo-phase-btn" data-phase="long-break" data-i18n="pomodoroPhaseLong">Lange Pause</button>
+            </div>
+
+            <!-- Ring + countdown -->
+            <div class="pomo-ring-wrap">
+              <svg viewBox="0 0 120 120">
+                <defs>
+                  <linearGradient id="pomoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:#0f766e"/>
+                    <stop offset="100%" style="stop-color:#1d4ed8"/>
+                  </linearGradient>
+                </defs>
+                <!-- Background ring -->
+                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--pomo-ring-bg)" stroke-width="8"/>
+                <!-- Progress ring -->
+                <circle id="pomo-ring-progress" cx="60" cy="60" r="54" fill="none"
+                  stroke="url(#pomoGradient)" stroke-width="8"
+                  stroke-linecap="round"
+                  style="stroke-dasharray:339.3; stroke-dashoffset:0; transition: stroke-dashoffset 1s linear;"/>
+              </svg>
+              <div class="pomo-countdown-overlay">
+                <div id="pomo-countdown">25:00</div>
+                <span id="pomo-phase-label">Bereit</span>
+                <span id="pomo-paused-label">⏸ Pausiert</span>
+              </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="pomo-controls">
+              <button class="btn-primary btn-full" id="pomo-start" data-i18n="pomodoroStart">Starten</button>
+              <button class="btn-soft" id="pomo-pause" data-i18n="pomodoroPause" style="display:none">Pausieren</button>
+              <button class="btn-danger" id="pomo-stop" data-i18n="pomodoroStop" style="display:none">Beenden</button>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div class="card pomo-settings">
+            <div class="title-row">
+              <h2 data-i18n="pomodoroSettingsTitle">Einstellungen</h2>
+              <button class="btn-soft" id="pomo-save-settings">Speichern</button>
+            </div>
+            <div class="pomo-settings-grid">
+              <div class="pomo-settings-row">
+                <label data-i18n="pomodoroWorkMin">Fokus (min)</label>
+                <input type="number" id="pomo-work-min" value="25" min="1" max="120" />
+              </div>
+              <div class="pomo-settings-row">
+                <label data-i18n="pomodoroShortMin">Kurze Pause (min)</label>
+                <input type="number" id="pomo-short-min" value="5" min="1" max="60" />
+              </div>
+              <div class="pomo-settings-row">
+                <label data-i18n="pomodoroLongMin">Lange Pause (min)</label>
+                <input type="number" id="pomo-long-min" value="15" min="1" max="120" />
+              </div>
+              <div class="pomo-settings-row">
+                <label data-i18n="pomodoroAfter">Lange Pause nach</label>
+                <input type="number" id="pomo-after-n" value="4" min="1" max="10" />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -519,25 +507,37 @@
               <h2 data-i18n="setupServerTitle">Server-Verbindung</h2>
               <span class="reconnect-status muted" id="reconnectStatus"></span>
             </div>
-            <div class="tracker-row" style="margin-bottom: 8px">
+            <div class="tracker-row" style="margin-bottom:8px">
               <input type="text" id="trackerUrlInput" placeholder="http://127.0.0.1:4545" />
               <button class="btn-soft" id="saveTrackerUrlBtn" data-i18n="setupSaveBtn">Speichern</button>
             </div>
             <button class="btn-primary btn-full" id="reconnectBtn" data-i18n="setupReconnectBtn">Verbinden</button>
           </div>
 
-          <!-- Theme & Language -->
+          <!-- Appearance -->
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="setupAppearanceTitle">Darstellung</h2>
             </div>
-            <div class="settings-row">
-              <button class="btn-soft" id="themeBtn">🌙 Dunkel</button>
-              <button class="btn-soft" id="langBtn">🇬🇧 English</button>
+            <!-- Theme toggle -->
+            <div class="setting-row">
+              <span class="setting-label" data-i18n="setupDarkMode">Dunkelmodus</span>
+              <label class="toggle-switch">
+                <input type="checkbox" id="themeToggle" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <!-- Language select -->
+            <div class="setting-row">
+              <span class="setting-label" data-i18n="setupLanguage">Sprache</span>
+              <select id="langSelect" class="lang-select">
+                <option value="de">🇩🇪 Deutsch</option>
+                <option value="en">🇬🇧 English</option>
+              </select>
             </div>
           </div>
 
-          <!-- LLM Summary -->
+          <!-- LLM summary -->
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="setupLlmTitle">KI-Zusammenfassung</h2>
@@ -546,11 +546,10 @@
             <div class="setup-label" data-i18n="setupLlmKeyLabel">API-Key</div>
             <div class="api-key-row">
               <input type="password" id="apiKeyInput"
-                data-i18n-ph="setupLlmKeyPlaceholder"
-                placeholder="sk-ant-..." />
+                data-i18n-ph="setupLlmKeyPlaceholder" placeholder="sk-ant-..." />
               <button class="btn-soft" id="toggleApiKeyBtn" title="Key anzeigen/verbergen">👁</button>
             </div>
-            <button class="btn-primary btn-full" id="summarizeBtn" data-i18n="setupLlmBtn">📊 Daten zusammenfassen</button>
+            <button class="btn-primary btn-full" id="summarizeBtn" data-i18n="setupLlmBtn">📊 Zusammenfassen</button>
             <div id="summaryResult" class="summary-box" style="display:none"></div>
           </div>
 
@@ -559,6 +558,6 @@
       </div><!-- /.pages -->
     </div><!-- /.content -->
 
-    <script src="popup.js"></script>
+    <script type="module" src="src/popup.js"></script>
   </body>
 </html>

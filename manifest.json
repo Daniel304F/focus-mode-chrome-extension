@@ -9,7 +9,8 @@
     "activeTab",
     "scripting",
     "alarms",
-    "windows"
+    "windows",
+    "notifications"
   ],
   "host_permissions": [
     "<all_urls>",
