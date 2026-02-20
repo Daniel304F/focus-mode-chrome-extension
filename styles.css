@@ -1,0 +1,40 @@
+.focus-mode-ui {
+  position: fixed !important;
+  right: 18px !important;
+  bottom: 18px !important;
+  z-index: 2147483646 !important;
+  width: min(360px, calc(100vw - 24px)) !important;
+  border: 1px solid rgba(15, 23, 42, 0.25) !important;
+  background: linear-gradient(145deg, #f8fafc, #eef2ff) !important;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2) !important;
+  border-radius: 12px !important;
+  padding: 10px 12px !important;
+  color: #0f172a !important;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  pointer-events: auto !important;
+}
+
+.focus-mode-title {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.2px !important;
+  margin-bottom: 2px !important;
+  color: #1d4ed8 !important;
+}
+
+.focus-mode-text {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+  color: #1f2937 !important;
+}
+
+#focus-mode-highlighter {
+  position: fixed !important;
+  z-index: 2147483645 !important;
+  pointer-events: none !important;
+  border: 2px solid #2563eb !important;
+  border-radius: 8px !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18) !important;
+  background: rgba(37, 99, 235, 0.12) !important;
+  transition: all 0.04s ease !important;
+}

@@ -1,10 +1,23 @@
 {
   "manifest_version": 3,
   "name": "FocusMode - Blocker & Hider",
-  "version": "1.0",
-  "description": "Blockiere Seiten und verstecke störende Elemente.",
-  "permissions": ["storage", "tabs", "activeTab", "scripting"],
-  "host_permissions": ["<all_urls>"],
+  "version": "2.0.0",
+  "description": "Blockiere Seiten, verstecke störende Elemente und tracke deine Fokuszeit.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "windows"
+  ],
+  "host_permissions": [
+    "<all_urls>",
+    "http://127.0.0.1/*",
+    "http://localhost/*",
+    "https://autocomplete.clearbit.com/*",
+    "https://api.anthropic.com/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "focus.svg"

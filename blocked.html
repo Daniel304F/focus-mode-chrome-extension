@@ -1,32 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>Seite blockiert</title>
+    <title>Seite blockiert | FocusMode</title>
     <style>
       body {
-        background-color: #f8d7da;
-        color: #721c24;
+        margin: 0;
+        min-height: 100vh;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        height: 100vh;
-        font-family: sans-serif;
+        background: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 45%);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         text-align: center;
+        color: #0f172a;
       }
+
+      .card {
+        max-width: 520px;
+        margin: 16px;
+        background: #ffffff;
+        border: 1px solid #dbe3ec;
+        border-radius: 16px;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
+        padding: 24px;
+      }
+
       h1 {
-        font-size: 3em;
-        margin-bottom: 0;
+        margin: 0 0 10px;
+        color: #b91c1c;
       }
+
       p {
-        font-size: 1.5em;
+        margin: 0 0 8px;
+        color: #334155;
+      }
+
+      .tip {
+        margin-top: 14px;
+        font-size: 14px;
+        background: #eff6ff;
+        color: #1e3a8a;
+        border-radius: 8px;
+        padding: 10px;
+      }
+
+      button {
+        margin-top: 16px;
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-size: 14px;
+        font-weight: 600;
+        background: #0f766e;
+        color: white;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background: #0b5f58;
       }
     </style>
   </head>
   <body>
-    <h1>🛑 Halt!</h1>
-    <p>Diese Seite hast du blockiert, um produktiv zu bleiben.</p>
-    <p>Geh zurück an die Arbeit!</p>
+    <main class="card">
+      <h1>Diese Seite ist blockiert</h1>
+      <p>Du hast diese Domain in FocusMode blockiert.</p>
+      <p>Nutze die Zeit jetzt für deine wichtigste Aufgabe.</p>
+      <div class="tip">
+        Tipp: Im FocusMode Popup kannst du Seiten verwalten, Elemente verstecken und
+        deine Fokuszeit auswerten.
+      </div>
+      <button id="backBtn">Zurück zur letzten Seite</button>
+    </main>
+    <script>
+      document.getElementById("backBtn").addEventListener("click", () => {
+        history.back();
+      });
+    </script>
   </body>
 </html>
