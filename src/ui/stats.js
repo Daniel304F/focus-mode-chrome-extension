@@ -2,6 +2,27 @@
 import { state } from "../state.js";
 import { escapeHtml, formatDuration } from "../lib/format.js";
 
+let _sortField = "totalMs"; // "totalMs" | "visits"
+let _sortDir = "desc";      // "desc" | "asc"
+
+export function initStatsEvents() {
+  document.getElementById("sortByTime")?.addEventListener("click", () => {
+    _sortField = "totalMs";
+    _updateSortBtns();
+    _renderTopSites();
+  });
+  document.getElementById("sortByVisits")?.addEventListener("click", () => {
+    _sortField = "visits";
+    _updateSortBtns();
+    _renderTopSites();
+  });
+  document.getElementById("sortDirBtn")?.addEventListener("click", () => {
+    _sortDir = _sortDir === "desc" ? "asc" : "desc";
+    _updateSortBtns();
+    _renderTopSites();
+  });
+}
+
 export function renderStats() {
   _renderOverview();
   _renderTopSites();
@@ -38,19 +59,23 @@ function _renderOverview() {
 
 function _renderTopSites() {
   const container = document.getElementById("topStatsList");
-  const countLabel = document.getElementById("topSitesCountLabel");
   if (!container) return;
 
   container.innerHTML = "";
   if (!state.pageStatsTop?.length) {
     container.innerHTML = `<div class="item"><div class="item-main"><div class="item-sub">Noch keine Tracking-Daten vorhanden.</div></div></div>`;
-    if (countLabel) countLabel.textContent = "";
     return;
   }
 
-  const top = state.pageStatsTop.slice(0, 10);
-  if (countLabel) countLabel.textContent = `${top.length} Seiten`;
-  const maxMs = top[0]?.totalMs || 1;
+  const sorted = [...state.pageStatsTop].sort((a, b) => {
+    const va = _sortField === "visits" ? (a.visits || 0) : (a.totalMs || 0);
+    const vb = _sortField === "visits" ? (b.visits || 0) : (b.totalMs || 0);
+    return _sortDir === "desc" ? vb - va : va - vb;
+  });
+
+  const top = sorted.slice(0, 5);
+  // Max is always computed from time for bar width, regardless of sort field
+  const maxMs = Math.max(...top.map((e) => e.totalMs || 0), 1);
 
   for (const entry of top) {
     const pct = Math.max(3, Math.round((entry.totalMs / maxMs) * 100));
@@ -64,6 +89,13 @@ function _renderTopSites() {
       <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>`;
     container.appendChild(div);
   }
+}
+
+function _updateSortBtns() {
+  document.getElementById("sortByTime")?.classList.toggle("active", _sortField === "totalMs");
+  document.getElementById("sortByVisits")?.classList.toggle("active", _sortField === "visits");
+  const dirBtn = document.getElementById("sortDirBtn");
+  if (dirBtn) dirBtn.textContent = _sortDir === "desc" ? "↓" : "↑";
 }
 
 function _renderDailyChart() {

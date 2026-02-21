@@ -257,6 +257,38 @@
 
       .reconnect-status { font-size: 11px; }
 
+      /* ── Sort controls ─────────────────────────────────────────────── */
+      .sort-controls { display: flex; gap: 4px; align-items: center; }
+      .btn-sort {
+        padding: 3px 7px; font-size: 10px; font-weight: 600; white-space: nowrap;
+        background: var(--item-bg); border: 1px solid var(--item-border);
+        border-radius: 6px; color: var(--muted); cursor: pointer;
+        transition: background 0.15s, color 0.15s;
+      }
+      .btn-sort.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .btn-sort-dir {
+        width: 22px; height: 22px; padding: 0; font-size: 12px; font-weight: 700;
+        background: var(--item-bg); border: 1px solid var(--item-border);
+        border-radius: 6px; color: var(--text); cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+      }
+
+      /* ── Info box ──────────────────────────────────────────────────── */
+      .info-box {
+        font-size: 11px; color: var(--muted); line-height: 1.5;
+        background: var(--surface-soft); border: 1px solid var(--line);
+        border-radius: 8px; padding: 8px 10px; margin-bottom: 6px;
+      }
+
+      /* ── Chip disabled ─────────────────────────────────────────────── */
+      .chip.dis { background: var(--item-bg); color: var(--muted); border-color: var(--line); }
+
+      /* ── Shortcut info ─────────────────────────────────────────────── */
+      .shortcut-info {
+        font-size: 10px; color: var(--muted); text-align: center;
+        padding: 4px 0 2px; line-height: 1.5;
+      }
+
       .setup-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
       .api-key-row { margin-bottom: 8px; }
       .api-key-row input { flex: 1; }
@@ -400,7 +432,11 @@
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="statsTopSites">Top-Seiten</h2>
-              <span class="muted" id="topSitesCountLabel"></span>
+              <div class="sort-controls">
+                <button class="btn-sort active" id="sortByTime">Zeit</button>
+                <button class="btn-sort" id="sortByVisits">Aufrufe</button>
+                <button class="btn-sort-dir" id="sortDirBtn">↓</button>
+              </div>
             </div>
             <div class="list" id="topStatsList"></div>
           </div>
@@ -501,17 +537,25 @@
         <!-- ── Einstellungen ── -->
         <div class="page" id="page-einstellungen">
 
-          <!-- Server connection -->
+          <!-- SQLite Tracker -->
           <div class="card">
             <div class="title-row">
-              <h2 data-i18n="setupServerTitle">Server-Verbindung</h2>
-              <span class="reconnect-status muted" id="reconnectStatus"></span>
+              <h2 data-i18n="setupSqliteTitle">SQLite-Tracker</h2>
+              <label class="toggle-switch" title="SQLite aktivieren">
+                <input type="checkbox" id="sqliteToggle" />
+                <span class="toggle-track"><span class="toggle-thumb"></span></span>
+              </label>
             </div>
-            <div class="tracker-row" style="margin-bottom:8px">
-              <input type="text" id="trackerUrlInput" placeholder="http://127.0.0.1:4545" />
-              <button class="btn-soft" id="saveTrackerUrlBtn" data-i18n="setupSaveBtn">Speichern</button>
+            <p class="info-box" data-i18n="setupSqliteInfo">Browsing-Daten werden standardmäßig lokal in Chrome gespeichert. Der optionale SQLite-Tracker sichert sie dauerhaft in einer lokalen Datenbankdatei auf deinem Rechner.</p>
+            <div id="sqliteConfig" style="display:none">
+              <p class="setup-label" data-i18n="setupSqliteHowTo" style="margin-bottom:8px">Server starten: cd tracker-server &amp;&amp; node server.js</p>
+              <div class="tracker-row" style="margin-bottom:8px">
+                <input type="text" id="trackerUrlInput" placeholder="http://127.0.0.1:4545" />
+                <button class="btn-soft" id="saveTrackerUrlBtn" data-i18n="setupSaveBtn">Speichern</button>
+              </div>
+              <button class="btn-primary btn-full" id="reconnectBtn" data-i18n="setupReconnectBtn">Verbinden</button>
+              <span class="reconnect-status muted" id="reconnectStatus" style="display:block;margin-top:6px"></span>
             </div>
-            <button class="btn-primary btn-full" id="reconnectBtn" data-i18n="setupReconnectBtn">Verbinden</button>
           </div>
 
           <!-- Appearance -->
@@ -541,9 +585,28 @@
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="setupLlmTitle">KI-Zusammenfassung</h2>
-              <span class="muted">Anthropic API</span>
             </div>
-            <div class="setup-label" data-i18n="setupLlmKeyLabel">API-Key</div>
+            <!-- Provider select -->
+            <div class="setup-label" data-i18n="setupLlmProvider">Anbieter</div>
+            <select id="llmProviderSelect" style="margin-bottom:10px">
+              <option value="anthropic" data-i18n="setupLlmProviderAnthropic">Anthropic (Standard)</option>
+              <option value="custom" data-i18n="setupLlmProviderCustom">Benutzerdefinierter Endpunkt</option>
+            </select>
+            <!-- Custom endpoint fields -->
+            <div id="llmCustomFields" style="display:none">
+              <div class="setup-label" data-i18n="setupLlmEndpointLabel">Endpunkt-URL</div>
+              <input type="text" id="llmEndpointInput"
+                data-i18n-ph="setupLlmEndpointPlaceholder"
+                placeholder="https://litellm.example.com/v1/chat/completions"
+                style="margin-bottom:8px" />
+              <div class="setup-label" data-i18n="setupLlmModelLabel">Modell</div>
+              <input type="text" id="llmModelInput"
+                data-i18n-ph="setupLlmModelPlaceholder"
+                placeholder="gpt-4o-mini"
+                style="margin-bottom:10px" />
+            </div>
+            <!-- API key -->
+            <div class="setup-label" id="llmKeyLabel" data-i18n="setupLlmKeyLabel">API-Key</div>
             <div class="api-key-row">
               <input type="password" id="apiKeyInput"
                 data-i18n-ph="setupLlmKeyPlaceholder" placeholder="sk-ant-..." />
@@ -552,6 +615,9 @@
             <button class="btn-primary btn-full" id="summarizeBtn" data-i18n="setupLlmBtn">📊 Zusammenfassen</button>
             <div id="summaryResult" class="summary-box" style="display:none"></div>
           </div>
+
+          <!-- Keyboard shortcut info -->
+          <p class="shortcut-info" data-i18n="setupShortcutInfo">Tastenkürzel: Strg+Umschalt+F · Anpassen unter chrome://extensions/shortcuts</p>
 
         </div><!-- /einstellungen -->
 

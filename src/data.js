@@ -52,8 +52,8 @@ export async function refreshAllData() {
 // ── Extended stats (today / week / 7-day chart) ───────────────────────────────
 
 async function computeExtendedStats() {
-  // Prefer SQLite server — more accurate for users with many sessions
-  if (state.trackerStatus?.online) {
+  // Prefer SQLite server — only when user has enabled it and server is online
+  if (state.sqliteEnabled && state.trackerStatus?.online) {
     try {
       const resp = await fetch(`${state.trackerApiBase}/api/stats/daily?days=7`);
       if (resp.ok) {

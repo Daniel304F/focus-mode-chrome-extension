@@ -13,7 +13,7 @@ import { refreshAllData } from "./data.js";
 import { initNav } from "./ui/nav.js";
 import { renderBlockedSites, initBlockerEvents } from "./ui/blocker.js";
 import { renderHiddenElements, initElementsEvents } from "./ui/elements.js";
-import { renderStats, renderLiveTimer } from "./ui/stats.js";
+import { renderStats, renderLiveTimer, initStatsEvents } from "./ui/stats.js";
 import { renderRecommendations, initRecsEvents } from "./ui/recs.js";
 import { renderPomodoro, initPomodoroEvents, startCountdownTick } from "./ui/pomodoro.js";
 import {
@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initNav(onNavigate);
   initBlockerEvents();
   initElementsEvents();
+  initStatsEvents();
   initRecsEvents();
   initPomodoroEvents();
   initSettingsEvents();

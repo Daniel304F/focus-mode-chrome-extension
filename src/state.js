@@ -29,6 +29,7 @@ export const state = {
   // Tracker
   trackerStatus: { online: false },
   trackerApiBase: "http://127.0.0.1:4545",
+  sqliteEnabled: false,
 
   // Pomodoro
   pomodoro: {
@@ -44,4 +45,9 @@ export const state = {
   // UI settings
   uiTheme: "light",
   uiLanguage: "de",
+
+  // LLM settings
+  llmProvider: "anthropic",  // "anthropic" | "custom"
+  llmEndpoint: "",
+  llmModel: "",
 };
