@@ -1,13 +1,13 @@
-# FocusMode - Browser Extension 👁️🚫
+# FocusMode - Browser Extension
 
 Eine moderne Browser-Erweiterung für Chrome, Edge und Brave, die dir hilft, produktiv zu bleiben.
 
 ## Funktionen
 
-* **🚫 Site Blocker:** Blockiere ablenkende Webseiten (mit Autocomplete-Vorschlägen für Top-Seiten).
-* **👁️ Element Hider:** Klicke auf störende Elemente (z.B. News-Feeds, Werbung), um sie dauerhaft auszublenden.
-* **✏️ Verwaltungs-Modus:** Stelle versteckte Elemente visuell wieder her oder setze alle Änderungen einer Seite zurück.
-* **⌨️ Schnellbedienung:** Nutze die Enter-Taste und Pfeiltasten für blitzschnelle Eingaben.
+* ** Site Blocker:** Blockiere ablenkende Webseiten (mit Autocomplete-Vorschlägen für Top-Seiten).
+* ** Element Hider:** Klicke auf störende Elemente (z.B. News-Feeds, Werbung), um sie dauerhaft auszublenden.
+* ** Verwaltungs-Modus:** Stelle versteckte Elemente visuell wieder her oder setze alle Änderungen einer Seite zurück.
+* ** Schnellbedienung:** Nutze die Enter-Taste und Pfeiltasten für blitzschnelle Eingaben.
 
 ## Installation (Entwicklermodus)
 
