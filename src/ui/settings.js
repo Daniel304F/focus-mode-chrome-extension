@@ -99,7 +99,7 @@ export function initSettingsEvents() {
   document.getElementById("toggleApiKeyBtn")?.addEventListener("click", () => {
     const isPassword = keyInput.type === "password";
     keyInput.type = isPassword ? "text" : "password";
-    document.getElementById("toggleApiKeyBtn").textContent = isPassword ? "🙈" : "👁";
+    document.getElementById("toggleApiKeyBtn").textContent = isPassword ? "Verbergen" : "Zeigen";
   });
 
   // LLM summary

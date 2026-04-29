@@ -4,73 +4,99 @@
     <meta charset="UTF-8" />
     <title>Seite blockiert | FocusMode</title>
     <style>
+      :root {
+        --bg: #fafafa;
+        --surface: #ffffff;
+        --line: #ececec;
+        --line-strong: #d4d4d8;
+        --text: #111113;
+        --muted: #6b7280;
+        --accent: #111113;
+      }
+
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body {
         margin: 0;
         min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: radial-gradient(circle at top, #dbeafe 0%, #f8fafc 45%);
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        text-align: center;
-        color: #0f172a;
+        background: var(--bg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                     "Helvetica Neue", Helvetica, Arial, sans-serif;
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
       }
 
       .card {
-        max-width: 520px;
-        margin: 16px;
-        background: #ffffff;
-        border: 1px solid #dbe3ec;
-        border-radius: 16px;
-        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.16);
-        padding: 24px;
+        max-width: 440px;
+        width: calc(100% - 32px);
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 36px 32px;
+      }
+
+      .eyebrow {
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 14px;
       }
 
       h1 {
-        margin: 0 0 10px;
-        color: #b91c1c;
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        margin-bottom: 10px;
       }
 
       p {
         margin: 0 0 8px;
-        color: #334155;
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 14px;
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 22px 0;
       }
 
       .tip {
-        margin-top: 14px;
-        font-size: 14px;
-        background: #eff6ff;
-        color: #1e3a8a;
-        border-radius: 8px;
-        padding: 10px;
+        font-size: 12px;
+        color: var(--muted);
+        line-height: 1.55;
       }
 
       button {
-        margin-top: 16px;
-        border: 0;
-        border-radius: 10px;
-        padding: 10px 14px;
-        font-size: 14px;
-        font-weight: 600;
-        background: #0f766e;
-        color: white;
+        margin-top: 22px;
+        border: 1px solid var(--accent);
+        border-radius: 6px;
+        padding: 10px 16px;
+        font-size: 13px;
+        font-weight: 500;
+        background: var(--accent);
+        color: var(--surface);
         cursor: pointer;
+        font-family: inherit;
+        transition: opacity 0.15s;
       }
-
-      button:hover {
-        background: #0b5f58;
-      }
+      button:hover { opacity: 0.88; }
     </style>
   </head>
   <body>
     <main class="card">
-      <h1>Diese Seite ist blockiert</h1>
-      <p>Du hast diese Domain in FocusMode blockiert.</p>
-      <p>Nutze die Zeit jetzt für deine wichtigste Aufgabe.</p>
-      <div class="tip">
-        Tipp: Im FocusMode Popup kannst du Seiten verwalten, Elemente verstecken und
-        deine Fokuszeit auswerten.
-      </div>
+      <div class="eyebrow">FocusMode</div>
+      <h1>Diese Seite ist blockiert.</h1>
+      <p>Du hast diese Domain in FocusMode hinzugefügt.</p>
+      <p>Nutze die Zeit für deine wichtigste Aufgabe.</p>
+      <div class="divider"></div>
+      <div class="tip">Im Popup kannst du Seiten verwalten, störende Elemente verstecken und deine Fokuszeit auswerten.</div>
       <button id="backBtn">Zurück zur letzten Seite</button>
     </main>
     <script>

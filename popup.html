@@ -4,324 +4,573 @@
     <meta charset="UTF-8" />
     <title>FocusMode</title>
     <style>
-      /* ── Variables ─────────────────────────────────────────────────── */
+      /* ── Design tokens ─────────────────────────────────────────────── */
       :root {
-        --bg: #f4f5f7;
+        --bg: #fafafa;
         --surface: #ffffff;
-        --surface-soft: #f8fafc;
-        --line: #dde3ea;
-        --text: #0f172a;
-        --muted: #536174;
-        --primary: #0f766e;
-        --primary-strong: #0b5f58;
-        --warning: #b91c1c;
-        --warning-soft: #fee2e2;
-        --ok: #166534;
-        --ok-soft: #dcfce7;
-        --sidebar-bg: #1e293b;
-        --sidebar-text: #94a3b8;
-        --sidebar-active: #5eead4;
-        --sidebar-active-bg: rgba(15,118,110,0.18);
-        --item-bg: #f8fafc;
-        --item-border: #edf1f6;
-        --icon-btn-bg: #ffffff;
-        --icon-btn-border: #dce3ed;
-        --btn-soft-bg: #eef2ff;
-        --btn-soft-color: #1e3a8a;
-        --ac-bg: #ffffff;
-        --ac-hover: #e0f2fe;
-        --bar-track: #e2e8f0;
-        --pomo-ring-bg: #e2e8f0;
-        --pomo-ring-fill: url(#pomoGradient);
+        --surface-soft: #f5f5f7;
+        --line: #ececec;
+        --line-strong: #d4d4d8;
+        --text: #111113;
+        --muted: #6b7280;
+        --muted-2: #9aa0a6;
+        --accent: #111113;
+        --accent-soft: #f0f0f2;
+        --danger: #b42318;
+        --danger-soft: #fdecea;
+        --ok: #117a4f;
+        --ok-soft: #e6f4ec;
+        --focus-ring: rgba(17, 17, 19, 0.18);
       }
 
       [data-theme="dark"] {
-        --bg: #0f172a;
-        --surface: #1e293b;
-        --surface-soft: #162032;
-        --line: #2d3f55;
-        --text: #e2e8f0;
-        --muted: #94a3b8;
-        --item-bg: #162032;
-        --item-border: #2d3f55;
-        --icon-btn-bg: #1e293b;
-        --icon-btn-border: #2d3f55;
-        --btn-soft-bg: rgba(99,122,220,0.15);
-        --btn-soft-color: #93c5fd;
-        --ac-bg: #1e293b;
-        --ac-hover: rgba(29,78,216,0.22);
-        --bar-track: #2d3f55;
-        --pomo-ring-bg: #2d3f55;
+        --bg: #0e0e10;
+        --surface: #151517;
+        --surface-soft: #1b1b1e;
+        --line: #26262a;
+        --line-strong: #34343a;
+        --text: #f4f4f5;
+        --muted: #a1a1aa;
+        --muted-2: #71717a;
+        --accent: #f4f4f5;
+        --accent-soft: #232328;
+        --danger: #ef6b7b;
+        --danger-soft: #2a1719;
+        --ok: #5cc28a;
+        --ok-soft: #15281f;
+        --focus-ring: rgba(244, 244, 245, 0.22);
       }
 
       /* ── Reset ─────────────────────────────────────────────────────── */
       * { box-sizing: border-box; margin: 0; padding: 0; }
 
+      html, body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                     "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 13px;
+        line-height: 1.45;
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
       body {
         width: 460px;
         height: 600px;
         overflow: hidden;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        color: var(--text);
         display: flex;
         background: var(--bg);
       }
 
+      button { font-family: inherit; font-size: inherit; }
+      input, select, textarea { font-family: inherit; font-size: inherit; }
+
       /* ── Sidebar ───────────────────────────────────────────────────── */
       .sidebar {
-        width: 68px;
+        width: 60px;
         height: 600px;
-        background: var(--sidebar-bg);
+        background: var(--surface);
+        border-right: 1px solid var(--line);
         display: flex;
         flex-direction: column;
-        align-items: center;
-        padding: 12px 0 8px;
+        align-items: stretch;
+        padding: 10px 0;
         flex-shrink: 0;
-        gap: 2px;
       }
 
       .sidebar-logo {
-        width: 36px; height: 36px;
-        background: linear-gradient(135deg, #0f766e, #1d4ed8);
-        border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
-        color: #fff; font-weight: 800; font-size: 13px;
-        margin-bottom: 10px; letter-spacing: -0.5px; flex-shrink: 0;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        text-align: center;
+        padding: 6px 0 14px;
       }
 
       .nav-btn {
-        width: 56px; background: transparent; border: 0; border-radius: 10px;
-        padding: 8px 4px 6px; display: flex; flex-direction: column;
-        align-items: center; gap: 3px; cursor: pointer; color: var(--sidebar-text);
-        transition: background 0.15s, color 0.15s;
+        position: relative;
+        background: transparent;
+        border: 0;
+        padding: 10px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+        color: var(--muted);
+        transition: color 0.12s;
       }
-      .nav-btn:hover { background: rgba(255,255,255,0.07); color: #e2e8f0; }
-      .nav-btn.active { background: var(--sidebar-active-bg); color: var(--sidebar-active); }
-      .nav-icon { font-size: 18px; line-height: 1; }
-      .nav-label { font-size: 10px; font-weight: 600; line-height: 1; white-space: nowrap; }
+      .nav-btn:hover { color: var(--text); }
+      .nav-btn.active { color: var(--text); }
+      .nav-btn.active::before {
+        content: "";
+        position: absolute;
+        left: 0; top: 8px; bottom: 8px;
+        width: 2px;
+        background: var(--accent);
+        border-radius: 0 2px 2px 0;
+      }
+      .nav-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+      .nav-label { font-size: 10px; line-height: 1; font-weight: 500; }
 
       /* ── Content ───────────────────────────────────────────────────── */
-      .content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-      [data-theme="light"] .content { background: radial-gradient(circle at 0% 0%, #eff6ff, #f4f5f7 60%); }
-      [data-theme="dark"] .content { background: radial-gradient(circle at 0% 0%, #0d1b40, #0f172a 60%); }
+      .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--bg);
+      }
 
       .header {
         flex-shrink: 0;
-        background: linear-gradient(135deg, #0f766e, #1d4ed8);
-        color: #fff; padding: 10px 14px 9px;
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--surface);
       }
-      .header-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-      .header h1 { font-size: 16px; letter-spacing: 0.2px; }
-      .status-row { display: flex; align-items: center; gap: 8px; }
+      .header-top {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 6px;
+      }
+      .header h1 {
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+      }
+      .status-row { font-size: 11px; color: var(--muted); }
+      #currentHostLabel { font-variant-numeric: tabular-nums; }
 
       /* ── Pages ─────────────────────────────────────────────────────── */
       .pages { flex: 1; overflow: hidden; position: relative; }
       .page {
         position: absolute; inset: 0; overflow-y: auto;
-        padding: 10px 12px; display: none; flex-direction: column; gap: 8px;
+        padding: 14px 16px; display: none; flex-direction: column; gap: 12px;
       }
       .page.active { display: flex; }
+      .page::-webkit-scrollbar { width: 6px; }
+      .page::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
 
       /* ── Cards ─────────────────────────────────────────────────────── */
       .card {
-        background: var(--surface); border: 1px solid var(--line);
-        border-radius: 12px; padding: 12px; flex-shrink: 0;
-        transition: background 0.2s, border-color 0.2s;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 14px;
+        flex-shrink: 0;
       }
-      .title-row { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 8px; }
-      h2 { font-size: 13px; }
+      .title-row {
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 8px; margin-bottom: 10px;
+      }
+      h2 {
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--text);
+      }
       .muted { color: var(--muted); font-size: 11px; }
 
       /* ── Forms ─────────────────────────────────────────────────────── */
-      .input-row, .action-row, .tracker-row, .settings-row, .api-key-row { display: flex; gap: 8px; }
-      .input-row { margin-bottom: 8px; }
+      .input-row, .action-row, .tracker-row, .api-key-row { display: flex; gap: 8px; }
+      .input-row { margin-bottom: 10px; }
       .autocomplete-container { position: relative; flex: 1; }
 
       input[type="text"], input[type="password"], input[type="number"], select {
-        width: 100%; border: 1px solid var(--line); border-radius: 8px;
-        padding: 7px 10px; font-size: 13px; background: var(--surface-soft);
-        color: var(--text); outline: none;
-        transition: background 0.2s, color 0.2s, border-color 0.2s;
+        width: 100%;
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        padding: 8px 10px;
+        background: var(--surface);
+        color: var(--text);
+        outline: none;
+        transition: border-color 0.15s, box-shadow 0.15s;
       }
       input[type="number"] { padding: 6px 8px; text-align: center; }
-      input:focus, select:focus { border-color: #1d4ed8; box-shadow: 0 0 0 3px rgba(29,78,216,0.14); background: var(--surface); }
+      input:focus, select:focus {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--focus-ring);
+      }
+      input::placeholder { color: var(--muted-2); }
 
       button {
-        border: 0; border-radius: 8px; padding: 7px 10px;
-        font-size: 12px; font-weight: 600; cursor: pointer;
-        transition: background 0.15s, color 0.15s;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        padding: 8px 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.12s, color 0.12s, border-color 0.12s;
       }
-      .btn-primary { background: var(--primary); color: #fff; }
-      .btn-primary:hover { background: var(--primary-strong); }
-      .btn-soft { background: var(--btn-soft-bg); color: var(--btn-soft-color); }
-      .btn-danger { background: var(--warning-soft); color: var(--warning); }
+      .btn-primary {
+        background: var(--accent);
+        color: var(--surface);
+        border-color: var(--accent);
+      }
+      .btn-primary:hover { opacity: 0.9; }
+      .btn-soft {
+        background: var(--surface);
+        color: var(--text);
+        border-color: var(--line-strong);
+      }
+      .btn-soft:hover { background: var(--surface-soft); }
+      .btn-danger {
+        background: var(--surface);
+        color: var(--danger);
+        border-color: var(--line-strong);
+      }
+      .btn-danger:hover { background: var(--danger-soft); border-color: var(--danger); }
       .btn-full { width: 100%; }
-      .action-row button, .settings-row .flex-btn { flex: 1; }
+      .action-row button { flex: 1; }
 
       /* ── Lists ─────────────────────────────────────────────────────── */
       .list { list-style: none; display: grid; gap: 6px; }
       .item {
         display: flex; align-items: center; justify-content: space-between;
-        gap: 8px; font-size: 12px; background: var(--item-bg);
-        border: 1px solid var(--item-border); border-radius: 8px; padding: 7px 8px;
+        gap: 10px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 9px 10px;
       }
       .item-main { flex: 1; min-width: 0; }
-      .item-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .item-sub { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-      .item-actions { display: flex; gap: 6px; flex-shrink: 0; }
-      .icon-btn {
-        width: 25px; height: 25px; padding: 0; border-radius: 6px;
-        background: var(--icon-btn-bg); border: 1px solid var(--icon-btn-border); color: var(--text);
+      .item-title {
+        font-weight: 500;
+        font-size: 12px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
-      .icon-btn.star.active { color: #f59e0b; border-color: rgba(245,158,11,0.4); background: #fffbeb; }
+      .item-sub {
+        font-size: 11px; color: var(--muted);
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        margin-top: 1px;
+      }
+      .item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+      .icon-btn {
+        width: 26px; height: 26px;
+        padding: 0;
+        border-radius: 4px;
+        background: transparent;
+        border: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1;
+        display: inline-flex; align-items: center; justify-content: center;
+      }
+      .icon-btn:hover { color: var(--text); border-color: var(--line-strong); }
+      .icon-btn.star.active { color: var(--text); border-color: var(--line-strong); background: var(--surface-soft); }
+      .icon-btn.remove:hover { color: var(--danger); border-color: var(--danger); }
 
       /* ── Stats ─────────────────────────────────────────────────────── */
-      .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-      .stat-box { background: var(--item-bg); border: 1px solid var(--item-border); border-radius: 8px; padding: 8px 10px; }
-      .stat-value { font-size: 16px; font-weight: 700; }
-      .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+      .stats-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+        margin-bottom: 4px;
+      }
+      .stat-box {
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 10px 12px;
+      }
+      .stat-value {
+        font-size: 18px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 3px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
 
-      .bar-item { display: flex; flex-direction: column; gap: 4px; padding: 7px 8px; background: var(--item-bg); border: 1px solid var(--item-border); border-radius: 8px; }
-      .bar-top { display: flex; justify-content: space-between; align-items: center; font-size: 12px; }
-      .bar-name { font-weight: 600; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .bar-meta { font-size: 11px; color: var(--muted); flex-shrink: 0; margin-left: 8px; }
-      .bar-track { height: 4px; background: var(--bar-track); border-radius: 999px; overflow: hidden; }
-      .bar-fill { height: 100%; background: linear-gradient(90deg, #0f766e, #1d4ed8); border-radius: 999px; }
+      .bar-item {
+        display: flex; flex-direction: column; gap: 5px;
+        padding: 9px 10px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+      }
+      .bar-top {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 12px;
+      }
+      .bar-name {
+        font-weight: 500; flex: 1; min-width: 0;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .bar-meta {
+        font-size: 11px; color: var(--muted); flex-shrink: 0; margin-left: 8px;
+        font-variant-numeric: tabular-nums;
+      }
+      .bar-track {
+        height: 3px;
+        background: var(--line);
+        border-radius: 999px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        background: var(--accent);
+        border-radius: 999px;
+      }
 
-      .daily-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; align-items: end; height: 90px; }
-      .day-col { display: flex; flex-direction: column; align-items: center; gap: 3px; height: 100%; justify-content: flex-end; }
-      .day-bar { width: 100%; background: linear-gradient(180deg, #0f766e, #1d4ed8); border-radius: 4px 4px 0 0; min-height: 3px; }
-      .day-label { font-size: 9px; color: var(--muted); text-align: center; }
-      .day-label.today { color: var(--primary); font-weight: 700; }
+      .daily-chart {
+        display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px;
+        align-items: end; height: 90px;
+      }
+      .day-col {
+        display: flex; flex-direction: column; align-items: center; gap: 4px;
+        height: 100%; justify-content: flex-end;
+      }
+      .day-bar {
+        width: 100%;
+        background: var(--accent);
+        opacity: 0.65;
+        border-radius: 2px;
+        min-height: 2px;
+      }
+      .day-col:hover .day-bar { opacity: 1; }
+      .day-label {
+        font-size: 10px; color: var(--muted); text-align: center;
+        font-variant-numeric: tabular-nums;
+      }
+      .day-label.today { color: var(--text); font-weight: 600; }
 
       /* ── Pomodoro ──────────────────────────────────────────────────── */
       .pomo-ring-wrap {
         display: flex; justify-content: center; align-items: center;
-        padding: 8px 0 4px; position: relative;
+        padding: 16px 0 8px; position: relative;
       }
-      .pomo-ring-wrap svg { width: 130px; height: 130px; transform: rotate(-90deg); }
+      .pomo-ring-wrap svg {
+        width: 150px; height: 150px;
+        transform: rotate(-90deg);
+      }
       .pomo-countdown-overlay {
-        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        position: absolute; top: 50%; left: 50%;
+        transform: translate(-50%, -50%);
         text-align: center; pointer-events: none;
       }
-      #pomo-countdown { font-size: 28px; font-weight: 800; letter-spacing: 1px; line-height: 1; }
-      #pomo-phase-label { font-size: 11px; color: var(--muted); margin-top: 3px; display: block; }
-      #pomo-paused-label { font-size: 10px; color: var(--warning); display: none; }
+      #pomo-countdown {
+        font-size: 30px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        line-height: 1;
+      }
+      #pomo-phase-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-top: 6px;
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      #pomo-paused-label {
+        font-size: 10px; color: var(--muted); display: none;
+        text-transform: uppercase; letter-spacing: 0.08em;
+      }
 
-      .pomo-session-row { text-align: center; font-size: 11px; color: var(--muted); margin-bottom: 8px; }
+      .pomo-session-row {
+        text-align: center; font-size: 11px; color: var(--muted);
+      }
 
-      .pomo-phase-btns { display: flex; gap: 6px; margin-bottom: 10px; }
+      .pomo-phase-btns { display: flex; gap: 6px; margin-bottom: 8px; }
       .pomo-phase-btn {
-        flex: 1; padding: 6px 4px; font-size: 11px; font-weight: 600;
-        background: var(--item-bg); border: 1.5px solid var(--item-border);
-        border-radius: 8px; color: var(--muted); cursor: pointer;
-        transition: all 0.15s;
+        flex: 1; padding: 7px 6px;
+        font-size: 11px; font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 6px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.12s;
       }
+      .pomo-phase-btn:hover { color: var(--text); }
       .pomo-phase-btn.active {
-        background: var(--sidebar-active-bg); border-color: var(--primary);
-        color: var(--primary);
+        background: var(--accent);
+        border-color: var(--accent);
+        color: var(--surface);
       }
 
-      .pomo-controls { display: flex; gap: 8px; }
-      .pomo-settings { margin-top: 8px; }
-      .pomo-settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-      .pomo-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-      .pomo-settings-row label { font-size: 11px; color: var(--muted); flex: 1; }
+      .pomo-controls { display: flex; gap: 8px; margin-top: 6px; }
+      .pomo-controls button { flex: 1; }
+
+      .pomo-settings-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      }
+      .pomo-settings-row {
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 8px;
+      }
+      .pomo-settings-row label {
+        font-size: 11px; color: var(--muted); flex: 1;
+      }
       .pomo-settings-row input { width: 56px; flex-shrink: 0; }
 
       /* ── Settings ──────────────────────────────────────────────────── */
       .setting-row {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 6px 0; border-bottom: 1px solid var(--line);
+        padding: 10px 0; border-bottom: 1px solid var(--line);
       }
-      .setting-row:last-child { border-bottom: 0; }
-      .setting-label { font-size: 12px; font-weight: 600; }
+      .setting-row:first-of-type { padding-top: 0; }
+      .setting-row:last-child { border-bottom: 0; padding-bottom: 0; }
+      .setting-label { font-size: 12px; font-weight: 500; }
 
       /* Toggle switch */
-      .toggle-switch { position: relative; display: inline-flex; align-items: center; cursor: pointer; }
+      .toggle-switch {
+        position: relative; display: inline-flex; align-items: center;
+        cursor: pointer;
+      }
       .toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
       .toggle-track {
-        width: 38px; height: 22px; background: var(--line); border-radius: 999px;
-        position: relative; transition: background 0.2s; cursor: pointer; display: block;
+        width: 34px; height: 20px;
+        background: var(--line-strong);
+        border-radius: 999px;
+        position: relative;
+        transition: background 0.18s;
+        cursor: pointer;
+        display: block;
       }
-      .toggle-switch input:checked + .toggle-track { background: var(--primary); }
+      .toggle-switch input:checked + .toggle-track { background: var(--accent); }
       .toggle-thumb {
-        position: absolute; top: 3px; left: 3px; width: 16px; height: 16px;
-        background: white; border-radius: 50%; transition: transform 0.2s;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+        position: absolute; top: 2px; left: 2px;
+        width: 16px; height: 16px;
+        background: var(--surface);
+        border-radius: 50%;
+        transition: transform 0.18s;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.18);
       }
-      .toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(16px); }
+      .toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(14px); }
 
-      /* Language select */
-      .lang-select { width: auto; padding: 5px 8px; font-size: 12px; }
+      .lang-select {
+        width: auto;
+        padding: 5px 26px 5px 10px;
+        font-size: 12px;
+        border-radius: 6px;
+        background: var(--surface);
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 8px center;
+      }
 
       .reconnect-status { font-size: 11px; }
 
       /* ── Sort controls ─────────────────────────────────────────────── */
       .sort-controls { display: flex; gap: 4px; align-items: center; }
       .btn-sort {
-        padding: 3px 7px; font-size: 10px; font-weight: 600; white-space: nowrap;
-        background: var(--item-bg); border: 1px solid var(--item-border);
-        border-radius: 6px; color: var(--muted); cursor: pointer;
-        transition: background 0.15s, color 0.15s;
+        padding: 4px 8px;
+        font-size: 10px; font-weight: 500;
+        white-space: nowrap;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        color: var(--muted);
+        cursor: pointer;
+        transition: all 0.12s;
       }
-      .btn-sort.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+      .btn-sort:hover { color: var(--text); }
+      .btn-sort.active {
+        background: var(--accent);
+        color: var(--surface);
+        border-color: var(--accent);
+      }
       .btn-sort-dir {
-        width: 22px; height: 22px; padding: 0; font-size: 12px; font-weight: 700;
-        background: var(--item-bg); border: 1px solid var(--item-border);
-        border-radius: 6px; color: var(--text); cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
+        width: 22px; height: 22px;
+        padding: 0;
+        font-size: 11px; font-weight: 500;
+        background: var(--surface);
+        border: 1px solid var(--line-strong);
+        border-radius: 4px;
+        color: var(--text);
+        cursor: pointer;
+        display: inline-flex; align-items: center; justify-content: center;
       }
 
-      /* ── Info box ──────────────────────────────────────────────────── */
+      /* ── Info / boxes ──────────────────────────────────────────────── */
       .info-box {
-        font-size: 11px; color: var(--muted); line-height: 1.5;
-        background: var(--surface-soft); border: 1px solid var(--line);
-        border-radius: 8px; padding: 8px 10px; margin-bottom: 6px;
+        font-size: 11px; color: var(--muted); line-height: 1.55;
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 9px 10px;
+        margin-bottom: 10px;
       }
 
-      /* ── Chip disabled ─────────────────────────────────────────────── */
-      .chip.dis { background: var(--item-bg); color: var(--muted); border-color: var(--line); }
-
-      /* ── Shortcut info ─────────────────────────────────────────────── */
-      .shortcut-info {
-        font-size: 10px; color: var(--muted); text-align: center;
-        padding: 4px 0 2px; line-height: 1.5;
+      .setup-label {
+        font-size: 11px;
+        color: var(--muted);
+        margin-bottom: 5px;
+        font-weight: 500;
       }
-
-      .setup-label { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-      .api-key-row { margin-bottom: 8px; }
+      .api-key-row { margin-bottom: 10px; }
       .api-key-row input { flex: 1; }
       .api-key-row button { flex-shrink: 0; }
 
       .summary-box {
-        margin-top: 10px; padding: 10px 12px; background: var(--surface-soft);
-        border: 1px solid var(--line); border-radius: 8px; font-size: 12px;
-        line-height: 1.6; color: var(--text); white-space: pre-wrap;
-        word-break: break-word; max-height: 200px; overflow-y: auto;
+        margin-top: 10px; padding: 10px 12px;
+        background: var(--surface-soft);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font-size: 12px; line-height: 1.55;
+        color: var(--text);
+        white-space: pre-wrap; word-break: break-word;
+        max-height: 200px; overflow-y: auto;
       }
       .summary-box.loading { color: var(--muted); font-style: italic; }
-      .summary-box.error { color: var(--warning); }
+      .summary-box.error { color: var(--danger); }
 
       /* ── Autocomplete ──────────────────────────────────────────────── */
       .autocomplete-items {
-        position: absolute; top: calc(100% + 2px); left: 0; right: 0; z-index: 40;
-        border: 1px solid var(--line); border-radius: 8px; background: var(--ac-bg);
-        box-shadow: 0 8px 22px rgba(15,23,42,0.15); overflow: hidden;
+        position: absolute; top: calc(100% + 4px); left: 0; right: 0;
+        z-index: 40;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: var(--surface);
+        box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
         max-height: 180px; overflow-y: auto;
       }
-      .autocomplete-item { padding: 7px 10px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--line); color: var(--text); }
-      .autocomplete-item:last-child { border-bottom: 0; }
-      .autocomplete-item:hover, .autocomplete-item.active { background: var(--ac-hover); }
-      .autocomplete-item small { color: var(--muted); }
-
-      /* ── Chips ─────────────────────────────────────────────────────── */
-      .chip {
-        display: inline-flex; align-items: center; gap: 5px; font-size: 10px;
-        font-weight: 600; padding: 3px 7px; border-radius: 999px; border: 1px solid transparent;
+      .autocomplete-item {
+        padding: 7px 10px; font-size: 12px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--line);
+        color: var(--text);
+        display: flex; align-items: baseline; gap: 6px;
       }
-      .chip.ok { background: var(--ok-soft); color: var(--ok); border-color: rgba(22,101,52,0.25); }
-      .chip.err { background: var(--warning-soft); color: var(--warning); border-color: rgba(185,28,28,0.25); }
+      .autocomplete-item:last-child { border-bottom: 0; }
+      .autocomplete-item:hover, .autocomplete-item.active { background: var(--surface-soft); }
+      .autocomplete-item small { color: var(--muted-2); font-size: 10px; }
+
+      /* ── Status chip ───────────────────────────────────────────────── */
+      .chip {
+        display: inline-flex; align-items: center; gap: 5px;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--line-strong);
+        background: var(--surface);
+        color: var(--muted);
+      }
+      .chip::before {
+        content: "";
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--muted-2);
+      }
+      .chip.ok { color: var(--ok); border-color: var(--line-strong); }
+      .chip.ok::before { background: var(--ok); }
+      .chip.err { color: var(--danger); border-color: var(--line-strong); }
+      .chip.err::before { background: var(--danger); }
+      .chip.dis { color: var(--muted); }
+
+      /* ── Shortcut info ─────────────────────────────────────────────── */
+      .shortcut-info {
+        font-size: 10px; color: var(--muted);
+        text-align: center;
+        padding: 4px 0 0;
+        line-height: 1.5;
+      }
     </style>
   </head>
   <body>
@@ -329,28 +578,29 @@
     <!-- ── Sidebar ────────────────────────────────────────────────────── -->
     <nav class="sidebar">
       <div class="sidebar-logo">FM</div>
-      <button class="nav-btn active" data-page="blocker">
-        <span class="nav-icon">🔒</span>
+
+      <button class="nav-btn active" data-page="blocker" title="Blocker">
+        <svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
         <span class="nav-label" data-i18n="navBlocker">Blocker</span>
       </button>
-      <button class="nav-btn" data-page="elemente">
-        <span class="nav-icon">👁</span>
+      <button class="nav-btn" data-page="elemente" title="Elemente">
+        <svg viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
         <span class="nav-label" data-i18n="navElemente">Elemente</span>
       </button>
-      <button class="nav-btn" data-page="statistik">
-        <span class="nav-icon">📊</span>
+      <button class="nav-btn" data-page="statistik" title="Statistik">
+        <svg viewBox="0 0 24 24"><path d="M4 20V10"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
         <span class="nav-label" data-i18n="navStatistik">Statistik</span>
       </button>
-      <button class="nav-btn" data-page="pomodoro">
-        <span class="nav-icon">🍅</span>
+      <button class="nav-btn" data-page="pomodoro" title="Timer">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2 2"/><path d="M9 2h6"/></svg>
         <span class="nav-label" data-i18n="navPomodoro">Timer</span>
       </button>
-      <button class="nav-btn" data-page="empfehlungen">
-        <span class="nav-icon">💡</span>
+      <button class="nav-btn" data-page="empfehlungen" title="Tipps">
+        <svg viewBox="0 0 24 24"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1.5 1.5 1.5 2.5h5c0-1 .8-1.8 1.5-2.5A6 6 0 0 0 12 3z"/></svg>
         <span class="nav-label" data-i18n="navEmpfehlungen">Tipps</span>
       </button>
-      <button class="nav-btn" data-page="einstellungen">
-        <span class="nav-icon">⚙️</span>
+      <button class="nav-btn" data-page="einstellungen" title="Setup">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
         <span class="nav-label" data-i18n="navEinstellungen">Setup</span>
       </button>
     </nav>
@@ -360,10 +610,10 @@
       <header class="header">
         <div class="header-top">
           <h1>FocusMode</h1>
-          <span class="chip err" id="trackerStatusChip">SQLite: offline</span>
+          <span class="chip dis" id="trackerStatusChip">SQLite: aus</span>
         </div>
         <div class="status-row">
-          <span class="muted" id="currentHostLabel">Aktive Seite: -</span>
+          <span id="currentHostLabel">Aktive Seite: —</span>
         </div>
       </header>
 
@@ -381,7 +631,7 @@
                 <input type="text" id="siteInput" autocomplete="off"
                   data-i18n-ph="blockerPlaceholder" placeholder="Domain, z. B. reddit.com" />
               </div>
-              <button class="btn-primary" id="addBtn" data-i18n="blockerAddBtn">Block</button>
+              <button class="btn-primary" id="addBtn" data-i18n="blockerAddBtn">Blockieren</button>
             </div>
             <ul class="list" id="blockList"></ul>
           </div>
@@ -397,9 +647,9 @@
             <div class="action-row">
               <button class="btn-primary" id="picker-btn" data-i18n="elementePickerBtn">Auswahl starten</button>
               <button class="btn-soft" id="manage-btn" data-i18n="elementeManageBtn">Verwalten</button>
-              <button class="btn-danger" id="reset-all-btn" data-i18n="elementeResetBtn">Alle zurücksetzen</button>
+              <button class="btn-danger" id="reset-all-btn" data-i18n="elementeResetBtn">Zurücksetzen</button>
             </div>
-            <ul class="list" id="hiddenElementList" style="margin-top:8px"></ul>
+            <ul class="list" id="hiddenElementList" style="margin-top:10px"></ul>
           </div>
         </div>
 
@@ -429,6 +679,7 @@
               </div>
             </div>
           </div>
+
           <div class="card">
             <div class="title-row">
               <h2 data-i18n="statsTopSites">Top-Seiten</h2>
@@ -440,6 +691,7 @@
             </div>
             <div class="list" id="topStatsList"></div>
           </div>
+
           <div class="card" id="dailyCard">
             <div class="title-row">
               <h2 data-i18n="statsLast7Days">Letzte 7 Tage</h2>
@@ -467,37 +719,29 @@
             <!-- Ring + countdown -->
             <div class="pomo-ring-wrap">
               <svg viewBox="0 0 120 120">
-                <defs>
-                  <linearGradient id="pomoGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style="stop-color:#0f766e"/>
-                    <stop offset="100%" style="stop-color:#1d4ed8"/>
-                  </linearGradient>
-                </defs>
-                <!-- Background ring -->
-                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--pomo-ring-bg)" stroke-width="8"/>
-                <!-- Progress ring -->
+                <circle cx="60" cy="60" r="54" fill="none" stroke="var(--line)" stroke-width="4"/>
                 <circle id="pomo-ring-progress" cx="60" cy="60" r="54" fill="none"
-                  stroke="url(#pomoGradient)" stroke-width="8"
+                  stroke="var(--accent)" stroke-width="4"
                   stroke-linecap="round"
                   style="stroke-dasharray:339.3; stroke-dashoffset:0; transition: stroke-dashoffset 1s linear;"/>
               </svg>
               <div class="pomo-countdown-overlay">
                 <div id="pomo-countdown">25:00</div>
                 <span id="pomo-phase-label">Bereit</span>
-                <span id="pomo-paused-label">⏸ Pausiert</span>
+                <span id="pomo-paused-label">Pausiert</span>
               </div>
             </div>
 
             <!-- Controls -->
             <div class="pomo-controls">
-              <button class="btn-primary btn-full" id="pomo-start" data-i18n="pomodoroStart">Starten</button>
+              <button class="btn-primary" id="pomo-start" data-i18n="pomodoroStart">Starten</button>
               <button class="btn-soft" id="pomo-pause" data-i18n="pomodoroPause" style="display:none">Pausieren</button>
               <button class="btn-danger" id="pomo-stop" data-i18n="pomodoroStop" style="display:none">Beenden</button>
             </div>
           </div>
 
           <!-- Settings -->
-          <div class="card pomo-settings">
+          <div class="card">
             <div class="title-row">
               <h2 data-i18n="pomodoroSettingsTitle">Einstellungen</h2>
               <button class="btn-soft" id="pomo-save-settings">Speichern</button>
@@ -549,7 +793,7 @@
             <p class="info-box" data-i18n="setupSqliteInfo">Browsing-Daten werden standardmäßig lokal in Chrome gespeichert. Der optionale SQLite-Tracker sichert sie dauerhaft in einer lokalen Datenbankdatei auf deinem Rechner.</p>
             <div id="sqliteConfig" style="display:none">
               <p class="setup-label" data-i18n="setupSqliteHowTo" style="margin-bottom:8px">Server starten: cd tracker-server &amp;&amp; node server.js</p>
-              <div class="tracker-row" style="margin-bottom:8px">
+              <div class="tracker-row" style="margin-bottom:10px">
                 <input type="text" id="trackerUrlInput" placeholder="http://127.0.0.1:4545" />
                 <button class="btn-soft" id="saveTrackerUrlBtn" data-i18n="setupSaveBtn">Speichern</button>
               </div>
@@ -563,7 +807,6 @@
             <div class="title-row">
               <h2 data-i18n="setupAppearanceTitle">Darstellung</h2>
             </div>
-            <!-- Theme toggle -->
             <div class="setting-row">
               <span class="setting-label" data-i18n="setupDarkMode">Dunkelmodus</span>
               <label class="toggle-switch">
@@ -571,12 +814,11 @@
                 <span class="toggle-track"><span class="toggle-thumb"></span></span>
               </label>
             </div>
-            <!-- Language select -->
             <div class="setting-row">
               <span class="setting-label" data-i18n="setupLanguage">Sprache</span>
               <select id="langSelect" class="lang-select">
-                <option value="de">🇩🇪 Deutsch</option>
-                <option value="en">🇬🇧 English</option>
+                <option value="de">Deutsch</option>
+                <option value="en">English</option>
               </select>
             </div>
           </div>
@@ -586,37 +828,33 @@
             <div class="title-row">
               <h2 data-i18n="setupLlmTitle">KI-Zusammenfassung</h2>
             </div>
-            <!-- Provider select -->
             <div class="setup-label" data-i18n="setupLlmProvider">Anbieter</div>
             <select id="llmProviderSelect" style="margin-bottom:10px">
               <option value="anthropic" data-i18n="setupLlmProviderAnthropic">Anthropic (Standard)</option>
               <option value="custom" data-i18n="setupLlmProviderCustom">Benutzerdefinierter Endpunkt</option>
             </select>
-            <!-- Custom endpoint fields -->
             <div id="llmCustomFields" style="display:none">
               <div class="setup-label" data-i18n="setupLlmEndpointLabel">Endpunkt-URL</div>
               <input type="text" id="llmEndpointInput"
                 data-i18n-ph="setupLlmEndpointPlaceholder"
                 placeholder="https://litellm.example.com/v1/chat/completions"
-                style="margin-bottom:8px" />
+                style="margin-bottom:10px" />
               <div class="setup-label" data-i18n="setupLlmModelLabel">Modell</div>
               <input type="text" id="llmModelInput"
                 data-i18n-ph="setupLlmModelPlaceholder"
                 placeholder="gpt-4o-mini"
                 style="margin-bottom:10px" />
             </div>
-            <!-- API key -->
             <div class="setup-label" id="llmKeyLabel" data-i18n="setupLlmKeyLabel">API-Key</div>
             <div class="api-key-row">
               <input type="password" id="apiKeyInput"
                 data-i18n-ph="setupLlmKeyPlaceholder" placeholder="sk-ant-..." />
-              <button class="btn-soft" id="toggleApiKeyBtn" title="Key anzeigen/verbergen">👁</button>
+              <button class="btn-soft" id="toggleApiKeyBtn" title="Key anzeigen/verbergen">Zeigen</button>
             </div>
-            <button class="btn-primary btn-full" id="summarizeBtn" data-i18n="setupLlmBtn">📊 Zusammenfassen</button>
+            <button class="btn-primary btn-full" id="summarizeBtn" data-i18n="setupLlmBtn">Zusammenfassen</button>
             <div id="summaryResult" class="summary-box" style="display:none"></div>
           </div>
 
-          <!-- Keyboard shortcut info -->
           <p class="shortcut-info" data-i18n="setupShortcutInfo">Tastenkürzel: Strg+Umschalt+F · Anpassen unter chrome://extensions/shortcuts</p>
 
         </div><!-- /einstellungen -->

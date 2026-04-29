@@ -27,11 +27,11 @@ export function renderRecommendations() {
     li.innerHTML = `
       <div class="item-main">
         <div class="item-title">${escapeHtml(rec.name || domain)}</div>
-        <div class="item-sub">${escapeHtml(domain)} · Interesse: ${escapeHtml(rec.sourceKeyword || "allgemein")}</div>
+        <div class="item-sub">${escapeHtml(domain)} · ${escapeHtml(rec.sourceKeyword || "allgemein")}</div>
       </div>
       <div class="item-actions">
         <button class="icon-btn star ${isFav ? "active" : ""}" title="Favorit">★</button>
-        <button class="icon-btn block" title="Blockieren">${isBlocked ? "✓" : "⛔"}</button>
+        <button class="icon-btn block" title="Blockieren">${isBlocked ? "✓" : "+"}</button>
       </div>`;
     li.querySelector(".star").addEventListener("click", () => toggleFav(domain));
     li.querySelector(".block").addEventListener("click", () => { if (!isBlocked) addBlocked(domain); });

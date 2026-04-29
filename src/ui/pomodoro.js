@@ -165,7 +165,7 @@ async function saveSettings() {
 
   // Visual feedback
   const btn = document.getElementById("pomo-save-settings");
-  if (btn) { btn.textContent = "✓"; setTimeout(() => { btn.textContent = "Speichern"; }, 1500); }
+  if (btn) { btn.textContent = "Gespeichert"; setTimeout(() => { btn.textContent = "Speichern"; }, 1500); }
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
