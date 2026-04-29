@@ -34,7 +34,11 @@ export function renderRecommendations() {
         <button class="icon-btn block" title="Blockieren">${isBlocked ? "✓" : "+"}</button>
       </div>`;
     li.querySelector(".star").addEventListener("click", () => toggleFav(domain));
-    li.querySelector(".block").addEventListener("click", () => { if (!isBlocked) addBlocked(domain); });
+    li.querySelector(".block").addEventListener("click", async () => {
+      if (isBlocked) return;
+      await addBlocked(domain);
+      renderRecommendations();
+    });
     list.appendChild(li);
   }
 }
@@ -43,6 +47,7 @@ export function initRecsEvents() {
   document.getElementById("refreshRecommendationsBtn")?.addEventListener("click", async () => {
     await sendToRuntime({ action: "refresh_recommendations" }).catch(() => null);
     await refreshAllData();
+    renderRecommendations();
   });
 }
 
@@ -50,6 +55,12 @@ async function toggleFav(site) {
   const n = normalizeSite(site);
   const { favoriteSites = [] } = await storageGet(["favoriteSites"]);
   const list = normalizeSites(favoriteSites);
-  await storageSet({ favoriteSites: list.includes(n) ? list.filter((s) => s !== n) : [...list, n] });
+  const newList = list.includes(n) ? list.filter((s) => s !== n) : [...list, n];
+  await storageSet({ favoriteSites: newList });
+
+  state.favoriteSites = newList;
+  renderRecommendations();
+
   await refreshAllData();
+  renderRecommendations();
 }

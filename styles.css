@@ -1,12 +1,14 @@
+/* ── HUD (info card top-right of page) ────────────────────────────── */
 .focus-mode-ui {
   position: fixed !important;
   right: 16px !important;
   bottom: 16px !important;
   z-index: 2147483646 !important;
   width: min(340px, calc(100vw - 24px)) !important;
-  border: 1px solid rgba(17, 17, 19, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
   background: #ffffff !important;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10) !important;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12),
+              0 0 0 3px rgba(239, 68, 68, 0.08) !important;
   border-radius: 8px !important;
   padding: 12px 14px !important;
   color: #111113 !important;
@@ -18,11 +20,25 @@
 
 .focus-mode-title {
   font-size: 11px !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
   letter-spacing: 0.08em !important;
   text-transform: uppercase !important;
   margin-bottom: 4px !important;
-  color: #6b7280 !important;
+  color: #dc2626 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.focus-mode-title::before {
+  content: "" !important;
+  display: inline-block !important;
+  width: 8px !important;
+  height: 8px !important;
+  border-radius: 50% !important;
+  background: #ef4444 !important;
+  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6) !important;
+  animation: focus-mode-pulse 1.4s ease-out infinite !important;
 }
 
 .focus-mode-text {
@@ -31,13 +47,44 @@
   color: #111113 !important;
 }
 
+/* ── Picker highlight: vivid, attention-grabbing red ──────────────── */
 #focus-mode-highlighter {
   position: fixed !important;
   z-index: 2147483645 !important;
   pointer-events: none !important;
-  border: 1.5px solid #111113 !important;
+  border: 2px solid #ef4444 !important;
   border-radius: 4px !important;
-  box-shadow: 0 0 0 2px rgba(17, 17, 19, 0.08) !important;
-  background: rgba(17, 17, 19, 0.06) !important;
-  transition: all 0.05s ease !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25),
+              0 0 24px rgba(239, 68, 68, 0.45),
+              inset 0 0 0 1px rgba(255, 255, 255, 0.6) !important;
+  background: rgba(239, 68, 68, 0.18) !important;
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.0) 0px,
+    rgba(239, 68, 68, 0.0) 8px,
+    rgba(239, 68, 68, 0.10) 8px,
+    rgba(239, 68, 68, 0.10) 16px
+  ) !important;
+  transition: top 0.05s ease, left 0.05s ease,
+              width 0.05s ease, height 0.05s ease !important;
+  animation: focus-mode-highlight-pulse 1.2s ease-in-out infinite !important;
+}
+
+@keyframes focus-mode-highlight-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25),
+                0 0 24px rgba(239, 68, 68, 0.45),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.40),
+                0 0 32px rgba(239, 68, 68, 0.65),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+  }
+}
+
+@keyframes focus-mode-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); }
+  70%  { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }

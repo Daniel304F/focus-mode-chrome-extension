@@ -541,6 +541,27 @@
       .autocomplete-item:hover, .autocomplete-item.active { background: var(--surface-soft); }
       .autocomplete-item small { color: var(--muted-2); font-size: 10px; }
 
+      /* ── Spinner / busy state ─────────────────────────────────────── */
+      @keyframes fm-spin { to { transform: rotate(360deg); } }
+      .spinner {
+        display: inline-block;
+        width: 12px; height: 12px;
+        border: 1.5px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: fm-spin 0.7s linear infinite;
+        vertical-align: -2px;
+      }
+      .btn-primary .spinner { border-color: var(--surface); border-top-color: transparent; }
+      button.is-busy { cursor: progress; opacity: 0.85; }
+      button:disabled { cursor: not-allowed; }
+
+      @keyframes fm-flash {
+        0%   { background: var(--accent-soft); }
+        100% { background: var(--surface); }
+      }
+      .item.is-new { animation: fm-flash 0.9s ease-out; }
+
       /* ── Status chip ───────────────────────────────────────────────── */
       .chip {
         display: inline-flex; align-items: center; gap: 5px;

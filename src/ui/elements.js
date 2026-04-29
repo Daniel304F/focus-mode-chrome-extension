@@ -60,11 +60,16 @@ async function unhide(entry) {
   if (filtered.length === 0) delete hiddenElements[state.currentHostname];
   else hiddenElements[state.currentHostname] = filtered;
   await storageSet({ hiddenElements });
+
+  state.hiddenForCurrentHost = filtered;
+  renderHiddenElements();
+
   if (state.currentTab?.id) {
     await sendToTab(state.currentTab.id, { action: "remove_hidden_selector", selector: entry.selector, id: entry.id }).catch(() => null);
     await sendToTab(state.currentTab.id, { action: "refresh_hidden_elements" }).catch(() => null);
   }
   await refreshAllData();
+  renderHiddenElements();
 }
 
 async function resetAll() {
@@ -73,8 +78,13 @@ async function resetAll() {
   const { hiddenElements = {} } = await storageGet(["hiddenElements"]);
   delete hiddenElements[state.currentHostname];
   await storageSet({ hiddenElements });
+
+  state.hiddenForCurrentHost = [];
+  renderHiddenElements();
+
   if (state.currentTab?.id) {
     await sendToTab(state.currentTab.id, { action: "refresh_hidden_elements" }).catch(() => null);
   }
   await refreshAllData();
+  renderHiddenElements();
 }

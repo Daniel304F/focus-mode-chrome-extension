@@ -28,6 +28,7 @@ const STATIC_SUGGESTIONS = [
 ];
 
 let acState = { index: -1, options: [] };
+let _flashSite = null;
 
 // ── Render ────────────────────────────────────────────────────────────────────
 
@@ -47,7 +48,7 @@ export function renderBlockedSites() {
   for (const site of state.blockedSites) {
     const isFav = state.favoriteSites.includes(site);
     const li = document.createElement("li");
-    li.className = "item";
+    li.className = "item" + (site === _flashSite ? " is-new" : "");
     li.innerHTML = `
       <div class="item-main"><div class="item-title">${escapeHtml(site)}</div></div>
       <div class="item-actions">
@@ -58,6 +59,8 @@ export function renderBlockedSites() {
     li.querySelector(".remove").addEventListener("click", () => removeBlocked(site));
     list.appendChild(li);
   }
+
+  _flashSite = null;
 }
 
 // ── Autocomplete ──────────────────────────────────────────────────────────────
@@ -162,34 +165,80 @@ async function addFromInput() {
   input.value = "";
   acState = { index: -1, options: [] };
   closeAc();
-  await addBlocked(site);
+
+  const btn = document.getElementById("addBtn");
+  setBtnBusy(btn, true);
+  try {
+    await addBlocked(site);
+  } finally {
+    setBtnBusy(btn, false);
+  }
 }
 
 export async function addBlocked(site) {
   const n = normalizeSite(site);
   if (!n) return;
+  if (state.blockedSites.includes(n)) return;
+
+  // Optimistic: update state + render synchronously before any async work
+  state.blockedSites = [...state.blockedSites, n];
+  _flashSite = n;
+  renderBlockedSites();
+
+  // Persist
   const { blockedSites = [] } = await storageGet(["blockedSites"]);
   const list = normalizeSites(blockedSites);
-  if (!list.includes(n)) {
-    list.push(n);
-    await storageSet({ blockedSites: list });
-  }
+  if (!list.includes(n)) list.push(n);
+  await storageSet({ blockedSites: list });
+
+  // Reconcile
   await refreshAllData();
+  renderBlockedSites();
 }
 
 async function removeBlocked(site) {
   const n = normalizeSite(site);
+
+  state.blockedSites = state.blockedSites.filter((s) => s !== n);
+  renderBlockedSites();
+
   const { blockedSites = [] } = await storageGet(["blockedSites"]);
-  await storageSet({ blockedSites: normalizeSites(blockedSites).filter((s) => s !== n) });
+  const newList = normalizeSites(blockedSites).filter((s) => s !== n);
+  await storageSet({ blockedSites: newList });
+
   await refreshAllData();
+  renderBlockedSites();
 }
 
 async function toggleFavorite(site) {
   const n = normalizeSite(site);
+  const wasFav = state.favoriteSites.includes(n);
+  state.favoriteSites = wasFav
+    ? state.favoriteSites.filter((s) => s !== n)
+    : [...state.favoriteSites, n];
+  renderBlockedSites();
+
   const { favoriteSites = [] } = await storageGet(["favoriteSites"]);
   const list = normalizeSites(favoriteSites);
-  await storageSet({
-    favoriteSites: list.includes(n) ? list.filter((s) => s !== n) : [...list, n],
-  });
+  const newList = list.includes(n) ? list.filter((s) => s !== n) : [...list, n];
+  await storageSet({ favoriteSites: newList });
+
   await refreshAllData();
+  renderBlockedSites();
+}
+
+// ── UI helpers ────────────────────────────────────────────────────────────────
+
+function setBtnBusy(btn, busy) {
+  if (!btn) return;
+  if (busy) {
+    btn.dataset.label = btn.textContent;
+    btn.disabled = true;
+    btn.classList.add("is-busy");
+    btn.innerHTML = `<span class="spinner" aria-hidden="true"></span>`;
+  } else {
+    btn.disabled = false;
+    btn.classList.remove("is-busy");
+    if (btn.dataset.label) btn.textContent = btn.dataset.label;
+  }
 }
